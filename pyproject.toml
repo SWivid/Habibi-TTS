@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "habibi-tts"
-version = "0.1.0"
+version = "0.1.1"
 description = "Habibi: Laying the Open-Source Foundation of Unified-Dialectal Arabic Speech Synthesis"
 readme = "README.md"
 license = {text = "MIT License"}
@@ -14,7 +14,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    "f5-tts",
+    "f5-tts>=1.1.5",
     "torch>=2.4.0, <2.9.0",
 ]
 
