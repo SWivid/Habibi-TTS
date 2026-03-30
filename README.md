@@ -12,8 +12,9 @@
 [![hfspace](https://img.shields.io/badge/-Model%20Suite-lightgrey?labelColor=grey&logo=huggingface&style=for-the-badge)](https://huggingface.co/SWivid/Habibi-TTS)
 
 <div align=left>
-<img src="docs/assets/main.png" width="75%">
+<img src="docs/assets/main.png" width="100%">
 </div>
+WER-S/O: word error rates from two different ASR systems. D/S/N-MOS: dialect pronunciation accuracy, speaker similarity, and naturalness.
 
 
 ## Quick Start
