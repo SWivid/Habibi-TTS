@@ -29,13 +29,10 @@ from habibi_tts.infer.utils_infer import (
 )
 
 
-accelerator = Accelerator()
-device = f"cuda:{accelerator.process_index}"
-
 rel_path = str(files("habibi_tts").joinpath("../../"))
 
 
-def single_infer(b, output_dir, ema_model, vocoder, target_sample_rate, seed=0):
+def single_infer(b, output_dir, ema_model, vocoder, target_sample_rate, device, seed=0):
     gen_path, ref_rms, ref_mel, ref_mel_len, total_mel_len, final_text_list = b
     ref_mel = ref_mel.to(device)
     with torch.inference_mode():
@@ -58,7 +55,8 @@ def single_infer(b, output_dir, ema_model, vocoder, target_sample_rate, seed=0):
     return 0
 
 
-def main():
+def run(accelerator):
+    device = str(accelerator.device)
     parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--model", type=str, required=True, help="Unified | Specialized")
     parser.add_argument("-d", "--dialect", type=str, required=True, help="MSA | SAU | UAE | ALG | IRQ | EGY | MAR")
@@ -131,12 +129,15 @@ def main():
     output_dir = f"{rel_path}/results/Habibi/{dialect}_{model}{'_single' if single else ''}"
     if not os.path.exists(output_dir) and accelerator.is_main_process:
         os.makedirs(output_dir)
+    accelerator.wait_for_everyone()
 
     with accelerator.split_between_processes(benchmark) as b_split:
         executor = ProcessPoolExecutor(max_workers=args.concurrency, mp_context=mp.get_context("spawn"))
         futures = []
         for b in b_split:
-            futures.append(executor.submit(single_infer, b, output_dir, ema_model, vocoder, target_sample_rate))
+            futures.append(
+                executor.submit(single_infer, b, output_dir, ema_model, vocoder, target_sample_rate, device)
+            )
         for futures in tqdm(
             futures, total=len(futures), disable=not accelerator.is_local_main_process, desc="Generating samples..."
         ):
@@ -145,6 +146,15 @@ def main():
 
     accelerator.wait_for_everyone()
     print(f"Task on {device} finished!")
+
+
+def main():
+    accelerator = Accelerator()
+
+    try:
+        run(accelerator)
+    finally:
+        accelerator.end_training()
 
 
 if __name__ == "__main__":
