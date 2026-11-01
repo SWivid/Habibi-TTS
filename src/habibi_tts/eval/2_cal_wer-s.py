@@ -28,7 +28,7 @@ def calculate_wer(wav_dir, dialect):
         processor = Wav2Vec2Processor.from_pretrained("IbrahimAmin/egyptian-arabic-wav2vec2-xlsr-53")
     elif dialect == "MAR":
         tokenizer = Wav2Vec2CTCTokenizer(
-            "/inspire/hdd/project/multilingualspeechrecognition/chenxie-25019/yushenchen/checkpoints/boumehdi/wav2vec2-large-xlsr-moroccan-darija/vocab.json",
+            "./vocab.json",
             unk_token="[UNK]",
             pad_token="[PAD]",
             word_delimiter_token="|",
