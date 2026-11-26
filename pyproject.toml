@@ -14,7 +14,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    "f5-tts>=1.1.5",
+    "f5-tts>=1.2.0",
     "torch>=2.4.0, <2.9.0",
 ]
 
